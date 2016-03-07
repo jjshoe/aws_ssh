@@ -17,6 +17,7 @@ parser = configargparse.ArgParser(default_config_files=['~/.aws_ssh'])
 group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument('search', nargs='?', help='Search for an instance with any tag value <search>')
 group.add_argument('-a', '--advanced', dest='filters', action='append', help='Advanced filtering, separate keys from values using = sign, like tag:environmentName=production. For more filters see http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/ApiReference-cmd-DescribeInstances.html')
+parser.add_argument('-s', '--skip-regions', dest='skipregions', action='append', help='Regions you want to skip checking for instances in')
 parser.add_argument('-u', '--user', dest='ssh_user', action='store', env_var='AWS_SSH_USER', required=True, help='User to SSH as')
 args = parser.parse_args()
 
@@ -45,7 +46,9 @@ def getReservationsFromFilter(blewp):
 instance_counter = 0
 
 for region in aws_regions:
-    # requires special auth
+    if region.name in args.skipregions or []:
+        continue
+
     try:
         connection = boto.ec2.connect_to_region(region.name)
         reservations = getReservationsFromFilter(connection)
@@ -67,10 +70,9 @@ for region in aws_regions:
                     discovered_instances[tag].append(instance.tags[tag])
     except boto.exception.EC2ResponseError as e:
         print 'Received an error connecting to ' + region.name
-         
-            # possible for an instance to not have a tag, which could mess up the order of things in the array..
-
-if len(discovered_instances['IP Address']) == 1:
+if len(discovered_instances['IP Address']) == 0:
+    print("No instances found.")
+elif len(discovered_instances['IP Address']) == 1:
     perform_ssh(discovered_instances['IP Address'][0])
 else:
     print tabulate.tabulate(discovered_instances, headers="keys", tablefmt="grid")
