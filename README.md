@@ -3,7 +3,7 @@ Easily SSH to Amazon AWS EC2 instances.
 
 ## About
 
-How often do you login into your AWS console to find the IP address or domain name that points to the instance you want to connect to? AWS SSH lets you specify simple or advanced filters to let you connect to that instance quickly. If multiple instances match you can review all the tags associated with the instances, and pick which one to connect to.
+How often do you log into your AWS console to find the IP address or domain name that points to the instance you want to connect to? AWS SSH lets you specify simple or advanced filters to let you connect to that instance quickly. If multiple instances match you can review all the tags associated with the instances, and pick which one to connect to.
 
 ## Installation
 
@@ -75,5 +75,5 @@ Last login: Mon Mar 23 17:14:18 2015 from 127.0.0.3
 jjshoe@www_01:~$
 ```
 
-You can specify as many advanced filters as you want by chaining -a over and over again. To see a list of valid advanced filters, search for ```Supported Filters``` on the following website:
+You can specify as many advanced filters as you want by chaining -a over and over again. To denote the difference between a key, and a value, use an equal (=) sign. To see a list of valid advanced filters, search for ```Supported Filters``` on the following website:
 http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/ApiReference-cmd-DescribeInstances.html
