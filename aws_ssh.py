@@ -17,7 +17,7 @@ parser = configargparse.ArgParser(default_config_files=['~/.aws_ssh'])
 group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument('search', nargs='?', help='Search for an instance with any tag value <search>')
 group.add_argument('-a', '--advanced', dest='filters', action='append', help='Advanced filtering, separate keys from values using = sign, like tag:environmentName=production. For more filters see http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/ApiReference-cmd-DescribeInstances.html')
-parser.add_argument('-s', '--skip-regions', dest='skipregions', action='append', help='Regions you want to skip checking for instances in')
+parser.add_argument('-s', '--skip-regions', dest='skipregions', action='append', env_var='AWS_SSH_SKIP_REGIONS', help='Regions you want to skip checking for instances in')
 parser.add_argument('-u', '--user', dest='ssh_user', action='store', env_var='AWS_SSH_USER', required=True, help='User to SSH as')
 args = parser.parse_args()
 
