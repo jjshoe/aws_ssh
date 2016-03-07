@@ -22,9 +22,14 @@ aws_access_key_id = <your_access_key_here>
 aws_secret_access_key = <your_secret_key_here>
 ```
 
-If you want to SSH as someone other than your login user, you can pass -u, --user, set the AWS_SSH_USER environment variable, or you can add the following to ```~/.aws_ssh```:
+If you want to SSH as someone other than your current user, you can pass -u, --user, set the AWS_SSH_USER environment variable, or you can add the following to ```~/.aws_ssh```:
 ```
 user = bob_barker
+```
+
+To speed up finding instances, you may choose to skip checking certain regions. You can pass -s, --skip-regions, set the AWS_SSH_SKIP_REGIONS environment variable, or you can add the following to ```~/.aws_ssh```:
+```
+skip-regions = [cn-north-1,us-gov-west-1]
 ```
 
 ## Usage
