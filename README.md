@@ -32,6 +32,11 @@ To speed up finding instances, you may choose to skip checking certain regions. 
 skip-regions = [cn-north-1,us-gov-west-1]
 ```
 
+If you want to connect to the private IP address of an instance, you can pass -p, --private-ip-address, set the AWS_SSH_PRIVATE_IP_ADDRESS environment varibale, or you can add the followting to ```~/.aws_ssh```:
+```
+private-ip-address
+```
+
 ## Usage
 ```
 usage: aws_ssh.py [-h] [-a FILTERS] -u SSH_USER [search]
