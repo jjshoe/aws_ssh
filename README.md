@@ -47,7 +47,7 @@ usage: aws_ssh.py [-h] [-a FILTERS] -u SSH_USER [search]
 ##### Basic:
 
 ```
-[jjshoe@desktop aws_ssh (master %)] ./aws_ssh.py *web*
+[jjshoe@desktop aws_ssh (master %)] ./aws_ssh.py web
 +-----+----------------+----------------+-----------------+
 |   # | IP Address     | Name           | environmentName |
 +=====+================+================+=================+
