@@ -6,6 +6,7 @@ import boto.ec2
 import boto.exception
 import collections
 import os
+import signal
 import sys
 import tabulate
 
@@ -19,7 +20,6 @@ group.add_argument('search', nargs='?', help='Search for an instance with any ta
 group.add_argument('-a', '--advanced', dest='filters', action='append', help='Advanced filtering, separate keys from values using = sign, like tag:environmentName=production. For more filters see http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/ApiReference-cmd-DescribeInstances.html')
 parser.add_argument('-s', '--skip-regions', dest='skipregions', action='append', env_var='AWS_SSH_SKIP_REGIONS', help='Regions you want to skip checking for instances in')
 parser.add_argument('-u', '--user', dest='ssh_user', action='store', env_var='AWS_SSH_USER', required=True, help='User to SSH as')
-parser.add_argument('-p', '--private-ip-address', dest='private_ip_address', action='store_true', env_var='AWS_SSH_PRIVATE_IP_ADDRESS', help='Use the private IP address instead of the public')
 args = parser.parse_args()
 
 def perform_ssh(ip_address):
@@ -33,7 +33,7 @@ def perform_ssh(ip_address):
 def getReservationsFromFilter(blewp):
     # -a wasn't passed in, search all tags
     if args.search:
-        return connection.get_all_reservations(None, {"tag-value": args.search})
+        return connection.get_all_reservations(None, {"tag-value": "*" + args.search + "*"})
     else:
         # -a was passed, let's process complex filters
         sanitized_filters = {}
@@ -43,6 +43,10 @@ def getReservationsFromFilter(blewp):
 
         return connection.get_all_reservations(None, sanitized_filters)
 
+def signal_handler(signal, frame):
+        sys.exit(0)
+
+signal.signal(signal.SIGINT, signal_handler)
 
 instance_counter = 0
 
@@ -62,17 +66,20 @@ for region in aws_regions:
                 instance_counter += 1
 
                 discovered_instances['#'].append(instance_counter)
-
-                if args.private_ip_address:
-                    discovered_instances['IP Address'].append(instance.private_ip_address)
-                else:
-                    discovered_instances['IP Address'].append(instance.ip_address)
+                discovered_instances['IP Address'].append(instance.ip_address)
 
                 for tag in instance.tags:
                     if tag not in discovered_instances:
                         discovered_instances[tag] = []
 
                     discovered_instances[tag].append(instance.tags[tag])
+
+                # A server may not have a tag, and we need to push a blank value on for that instance
+                for tag in discovered_instances:
+                    while len(discovered_instances[tag]) < instance_counter:
+                        discovered_instances[tag].append('')  
+                  
+
     except boto.exception.EC2ResponseError as e:
         print 'Received an error connecting to ' + region.name
 if len(discovered_instances['IP Address']) == 0:
