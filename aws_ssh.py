@@ -44,6 +44,7 @@ def getReservationsFromFilter(blewp):
         return connection.get_all_reservations(None, sanitized_filters)
 
 def signal_handler(signal, frame):
+        print("")
         sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
