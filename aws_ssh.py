@@ -73,14 +73,14 @@ for region in aws_regions:
                     if tag not in discovered_instances:
                         discovered_instances[tag] = []
 
-                    discovered_instances[tag].append(instance.tags[tag])
+                    if tag != '#':
+                        discovered_instances[tag].append(instance.tags[tag])
 
                 # A server may not have a tag, and we need to push a blank value on for that instance
                 for tag in discovered_instances:
                     while len(discovered_instances[tag]) < instance_counter:
                         discovered_instances[tag].append('')  
                   
-
     except boto.exception.EC2ResponseError as e:
         print 'Received an error connecting to ' + region.name
 if len(discovered_instances['IP Address']) == 0:
