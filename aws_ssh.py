@@ -20,6 +20,7 @@ group.add_argument('search', nargs='?', help='Search for an instance with any ta
 group.add_argument('-a', '--advanced', dest='filters', action='append', help='Advanced filtering, separate keys from values using = sign, like tag:environmentName=production. For more filters see http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/ApiReference-cmd-DescribeInstances.html')
 parser.add_argument('-s', '--skip-regions', dest='skipregions', action='append', env_var='AWS_SSH_SKIP_REGIONS', help='Regions you want to skip checking for instances in')
 parser.add_argument('-u', '--user', dest='ssh_user', action='store', env_var='AWS_SSH_USER', required=True, help='User to SSH as')
+parser.add_argument('-p', '--private-ip-address', dest='private_ip_address', action='store_true', env_var='AWS_SSH_PRIVATE_IP_ADDRESS', help='SSH to the prive IP')
 args = parser.parse_args()
 
 def perform_ssh(ip_address):
@@ -67,7 +68,11 @@ for region in aws_regions:
                 instance_counter += 1
 
                 discovered_instances['#'].append(instance_counter)
-                discovered_instances['IP Address'].append(instance.ip_address)
+
+                if (args.private_ip_address):
+                    discovered_instances['IP Address'].append(instance.private_ip_address)
+                else:
+                    discovered_instances['IP Address'].append(instance.ip_address)
 
                 for tag in instance.tags:
                     if tag not in discovered_instances:
